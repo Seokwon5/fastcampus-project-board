@@ -62,15 +62,15 @@ public class DataRestTest {
 
     }
 
-//    @DisplayName("[api] 댓글 단건 조회")
-//    @Test
-//    void givenNothing_whenRequestingArticleComment_thenReturnsArticleCommentJsonResponse() throws Exception {
-//        //Given
-//
-//        //When & Then
-//        mvc.perform(get("/api/articlesComments/1"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")));
-//
-//    }
+    @DisplayName("[api] 댓글 단건 조회")
+    @Test
+    void givenNothing_whenRequestingArticleComment_thenReturnsArticleCommentJsonResponse() throws Exception {
+        //Given
+
+        //When & Then
+        mvc.perform(get("/api/articlesComments/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.valueOf("application/hal+json")));
+
+    }
 }
