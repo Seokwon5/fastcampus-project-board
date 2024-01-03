@@ -15,9 +15,7 @@ spring:
     username: lee
     password: tjrdnjs5
     driver-class-name: com.mysql.cj.jdbc.Driver
-#   url: jdbc:h2:mem:testdb
-#   username: sa
-#   driver-class-name: org.h2.Driver
+
   jpa:
     defer-datasource-initialization: true
     hibernate.ddl-auto: create
@@ -31,5 +29,7 @@ spring:
   data.rest:
     base-path: /api
     detection-strategy: annotated
+  thymeleaf3:
+    decoupled-logic: true
 
 
