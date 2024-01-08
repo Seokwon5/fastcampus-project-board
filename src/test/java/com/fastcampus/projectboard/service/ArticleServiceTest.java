@@ -39,7 +39,7 @@ class ArticleServiceTest {
         Pageable pageable = Pageable.ofSize(20);
         given(articleRepository.findAll(pageable)).willReturn(Page.empty());
         //when
-        Page<ArticleDto> articles = sut.searchArticles(null, null); //제목, 본문, id, 닉네임, 해시태그
+        Page<ArticleDto> articles = sut.searchArticles(null, null, pageable); //제목, 본문, id, 닉네임, 해시태그
 
         //then
         assertThat(articles).isEmpty();
@@ -53,14 +53,14 @@ class ArticleServiceTest {
         SearchType searchType = SearchType.TITLE;
         String searchKeyword = "title";
         Pageable pageable = Pageable.ofSize(20);
-        given(articleRepository.findByTitleContaining(searchKeyword, pageable));
+        given(articleRepository.findByTitleContaining(searchKeyword, pageable)).willReturn(Page.empty());
 
         //when
-        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKeyword);
+        Page<ArticleDto> articles = sut.searchArticles(searchType, searchKeyword, pageable);
 
         //then
         assertThat(articles).isEmpty();
-        then(articleRepository).should().findByTitleContaining(searchKeyword);
+        then(articleRepository).should().findByTitleContaining(searchKeyword, pageable);
     }
 
     @DisplayName("게시글을 조회하면, 게시글을 반환한다.")
@@ -69,10 +69,10 @@ class ArticleServiceTest {
         //given
         Long articleId = 1L;
         Article article = createArticle();
-        given(articleRepository.findById(articleId)).willReturn(Optional.of());
+        given(articleRepository.findById(articleId)).willReturn(Optional.of(article));
 
         //when
-        ArticleWithCommentsDto dto = sut.getArticle(articleId);
+        ArticleDto dto = sut.getArticle(articleId);
 
         //then
         assertThat(dto)

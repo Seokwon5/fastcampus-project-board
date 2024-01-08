@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public record ArticleWithCommentsDto(
         Long id,
         UserAccountDto userAccountDto,
-        Set<ArticleCommentDto> articleCommentDtos,
+        String hashtag,
         String title,
         String content,
         Set<HashtagDto> hashtagDtos,
@@ -28,14 +28,10 @@ public record ArticleWithCommentsDto(
                 UserAccountDto.from(entity.getUserAccount()),
                 entity.getArticleComments().stream()
                         .map(ArticleCommentDto::from)
-                        .collect(Collectors.toCollection(LinkedHashSet::new))
-                ,
+                        .collect(Collectors.toSet()),
                 entity.getTitle(),
                 entity.getContent(),
-                entity.getHashtags().stream()
-                        .map(HashtagDto::from)
-                        .collect(Collectors.toUnmodifiableSet())
-                ,
+                entity.getHashtag(),
                 entity.getCreatedAt(),
                 entity.getCreatedBy(),
                 entity.getModifiedAt(),
