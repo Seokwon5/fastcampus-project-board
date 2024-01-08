@@ -2,9 +2,12 @@ package com.fastcampus.projectboard.dto.response;
 
 import com.fastcampus.projectboard.dto.ArticleCommentDto;
 import org.apache.logging.log4j.util.PropertySource;
-import org.hibernate.mapping.Set;
+
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 public record ArticleCommentResponse(
         Long id,
@@ -22,7 +25,7 @@ public record ArticleCommentResponse(
     }
 
     public static ArticleCommentResponse of(Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId, Long parentCommentId) {
-        PropertySource.Comparator<ArticleCommentResponse> childCommentComparator = Comparator
+        Comparator<ArticleCommentResponse> childCommentComparator = Comparator
                 .comparing(ArticleCommentResponse::createdAt)
                 .thenComparingLong(ArticleCommentResponse::id);
         return new ArticleCommentResponse(id, content, createdAt, email, nickname, userId, parentCommentId, new TreeSet<>(childCommentComparator));
