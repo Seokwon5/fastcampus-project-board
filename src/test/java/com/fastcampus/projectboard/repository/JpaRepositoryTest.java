@@ -19,21 +19,23 @@ class JpaRepositoryTest {
 
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRepository userAccountRepository;
 
 
     public JpaRepositoryTest(
            @Autowired ArticleRepository articleRepository,
            @Autowired ArticleCommentRepository articleCommentRepository
+           @Autowired UserAccountRepository userAccountRepository
     ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @DisplayName("select 테스트")
     @Test
     void givenTestData_whenSelecting_thenWorksFine() {
         //Given
-
 
         //When
         List<Article> articles = articleRepository.findAll();
