@@ -63,6 +63,7 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
 
+
     @DisplayName(" [view][GET] 게시글 리스트 (게시판) 페이지 - 정상 호출")
     @Test
     public void givenSearchKeyword_whenSearchingArticlesView_thenReturnsArticlesView() throws Exception {
@@ -88,6 +89,8 @@ class ArticleControllerTest {
         then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
         then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
     }
+
+
 
     @DisplayName("[view][GET] 게시글 리스트 (게시판) 페이지 - 페이징, 정렬 기능")
     @Test
