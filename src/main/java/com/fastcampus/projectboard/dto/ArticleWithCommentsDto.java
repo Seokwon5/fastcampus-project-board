@@ -9,26 +9,22 @@ import java.util.stream.Collectors;
 public record ArticleWithCommentsDto(
         Long id,
         UserAccountDto userAccountDto,
-        String hashtag,
         String title,
         String content,
-        Set<HashtagDto> hashtagDtos,
+        String hashtag,
         LocalDateTime createdAt,
         String createdBy,
         LocalDateTime modifiedAt,
         String modifiedBy
 ) {
-    public static ArticleWithCommentsDto of(Long id, UserAccountDto userAccountDto, Set<ArticleCommentDto> articleCommentDtos, String title, String content, Set<HashtagDto> hashtagDtos, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new ArticleWithCommentsDto(id, userAccountDto, articleCommentDtos, title, content, hashtagDtos, createdAt, createdBy, modifiedAt, modifiedBy);
+    public static ArticleWithCommentsDto of(Long id, UserAccountDto userAccountDto, Set<ArticleCommentDto> articleCommentDtos, String title, String content,String hashtag, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+        return new ArticleWithCommentsDto(id, userAccountDto,  title, content, hashtag, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     public static ArticleWithCommentsDto from(Article entity) {
         return new ArticleWithCommentsDto(
                 entity.getId(),
                 UserAccountDto.from(entity.getUserAccount()),
-                entity.getArticleComments().stream()
-                        .map(ArticleCommentDto::from)
-                        .collect(Collectors.toSet()),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getHashtag(),
