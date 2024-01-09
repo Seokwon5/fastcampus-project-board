@@ -1,7 +1,7 @@
 package com.fastcampus.projectboard.service;
 
 import com.fastcampus.projectboard.domain.Article;
-import com.fastcampus.projectboard.domain.type.SearchType;
+import com.fastcampus.projectboard.domain.constant.SearchType;
 import com.fastcampus.projectboard.dto.ArticleDto;
 import com.fastcampus.projectboard.dto.ArticleUpdateDto;
 import com.fastcampus.projectboard.dto.ArticleWithCommentsDto;
@@ -38,6 +38,13 @@ public class ArticleService {
                case NICKNAME -> articleRepository.findByUserAccount_NicknameContaining(searchKeyword, pageable).map(ArticleDto::from);
                case HASHTAG -> articleRepository.findByHashtag("#" + searchKeyword, pageable).map(ArticleDto::from);
           };
+     }
+
+     @Transactional(readOnly = true)
+     public ArticleWithCommentsDto getArticleWithComments(Long articleId) {
+          return articleRepository.findById(articleId)
+                  .map(ArticleWithCommentsDto::from)
+                  .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
      }
 
      @Transactional(readOnly = true)
