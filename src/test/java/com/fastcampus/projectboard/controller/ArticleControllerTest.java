@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -30,9 +29,10 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("View 컨트롤러 - 게시글")
@@ -228,7 +228,7 @@ class ArticleControllerTest {
         ArticleRequest articleRequest = ArticleRequest.of("new title", "new content", "#new hashtag");
         willDoNothing().given(articleService).saveArticle(any(ArticleDto.class));
 
-        // When & Then
+        // When & The
         mvc.perform(
                         post("/articles/form")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
