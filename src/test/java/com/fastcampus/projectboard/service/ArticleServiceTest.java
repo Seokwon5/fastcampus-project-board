@@ -174,11 +174,12 @@ class ArticleServiceTest {
     void givenArticleIdAndModifiedInfo_whenUpdatingArticle_thenUpdatesArticle() {
         //given
         Article article = createArticle();
-        ArticleDto dto = createArticleDto("새 타이틀","새 내용","새 해시태그");
+        ArticleDto dto = createArticleDto("새 타이틀", "새 내용", "새 해시태그");
         given(articleRepository.getReferenceById(dto.id())).willReturn(article);
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(dto.userAccountDto().toEntity());
 
         //when
-        sut.updateArticle(dto);
+        sut.updateArticle(dto.id(), dto);
 
         //then
         assertThat(article)
@@ -186,19 +187,23 @@ class ArticleServiceTest {
                 .hasFieldOrPropertyWithValue("content", dto.content())
                 .hasFieldOrPropertyWithValue("hashtag", dto.hashtag());
         then(articleRepository).should().getReferenceById(dto.id());
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
+
 
     }
     @DisplayName("게시글의 ID를 입력하면, 게시글을 삭제한다.")
     @Test
     void givenArticleId_whenDeletingArticle_thenDeletesArticle() {
         //given
-        willDoNothing().given(articleRepository).delete(any(Article.class));
+        Long articleId = 1L;
+        String userId = "lee";
+        willDoNothing().given(articleRepository).deleteByIdAndUserAccount_UserId(articleId, userId);
 
         //when
-        sut.deleteArticle(1L);
+        sut.deleteArticle(1L, userId);
 
         //then
-        then(articleRepository).should().delete(any(Article.class));
+        then(articleRepository).should().deleteByIdAndUserAccount_UserId(articleId, userId);
 
     }
 
