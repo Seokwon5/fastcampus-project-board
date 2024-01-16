@@ -34,4 +34,4 @@ Spring Boot
 
 ## 데모 페이지
 
-(준비중)
+* https://board-lee-d307f2c4880f.herokuapp.com/
