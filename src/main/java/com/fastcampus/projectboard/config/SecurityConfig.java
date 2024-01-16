@@ -1,21 +1,61 @@
 package com.fastcampus.projectboard.config;
 
+import com.fastcampus.projectboard.dto.UserAccountDto;
+import com.fastcampus.projectboard.dto.security.BoardPrincipal;
+import com.fastcampus.projectboard.repository.UserAccountRepository;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
+
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .formLogin(withDefaults());
-
-        return http.build();
+     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/",
+                                "/articles",
+                                "/articles/search-hashtag"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(withDefaults())
+                .logout(logout -> logout.logoutSuccessUrl("/")
+                        )
+                .build();
     }
+
+    //인증 데이터를 가져오는 서비스 로직 구현
+    @Bean
+    public UserDetailsService userDetailsService(UserAccountRepository userAccountRepository) { //db에 저장하기 위한 UserAccountRepository의 bean을 불러옴.
+        return username -> userAccountRepository
+                .findById(username)
+                .map(UserAccountDto::from)
+                .map(BoardPrincipal::from)
+                .orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다 - username: " + username));
+
+    }
+
+    //패스워드 인코더
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
 }
+

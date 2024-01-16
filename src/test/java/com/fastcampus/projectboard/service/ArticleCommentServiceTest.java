@@ -35,24 +35,7 @@ class ArticleCommentServiceTest {
 
     @Mock private UserAccountRepository userAccountRepository;
 
-    @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
-    @Test
-    void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
-        // Given
-        Long articleId = 1L;
 
-        ArticleComment expected = createArticleComment("content");
-        given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(expected));
-
-        // When
-        List<ArticleCommentDto> actual = sut.searchArticleComments(articleId);
-
-        // Then
-        assertThat(actual).hasSize(1)
-                        .first().hasFieldOrPropertyWithValue("content", expected.getContent());
-
-        then(articleCommentRepository).should().findByArticle_Id(articleId);
-    }
     @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
     void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
@@ -70,6 +53,7 @@ class ArticleCommentServiceTest {
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleCommentRepository).should().save(any(ArticleComment.class));
     }
+
 
     @DisplayName("없는 댓글 정보를 수정하려고 하면, 경고 로그를 찍고 아무것도 안한다.")
     @Test
@@ -92,13 +76,14 @@ class ArticleCommentServiceTest {
     void givenArticleCommentId_whenDeletingArticleComment_thenDeletesArticleComment() {
         // Given
         Long articleCommentId = 1L;
-        willDoNothing().given(articleCommentRepository).deleteById(articleCommentId);
+        String userId = "lee";
+        willDoNothing().given(articleCommentRepository).deleteByIdAndUserAccount_UserId(articleCommentId, userId);
 
         // When
-        sut.deleteArticleComment(articleCommentId);
+        sut.deleteArticleComment(articleCommentId, userId);
 
         // Then
-        then(articleCommentRepository).should().deleteById(articleCommentId);
+        then(articleCommentRepository).should().deleteByIdAndUserAccount_UserId(articleCommentId, userId);
     }
 
 
@@ -108,6 +93,7 @@ class ArticleCommentServiceTest {
                 1L,
                 createUserAccountDto(),
                 content,
+                LocalDateTime.now(),
                 "lee",
                 LocalDateTime.now(),
                 "lee"
@@ -118,7 +104,7 @@ class ArticleCommentServiceTest {
         return UserAccountDto.of(
                 "lee",
                 "password",
-                "tjrdnjs5@gmail.com",
+                "lee@mail.com",
                 "Lee",
                 "This is memo",
                 LocalDateTime.now(),
@@ -128,20 +114,22 @@ class ArticleCommentServiceTest {
         );
     }
 
-    private ArticleComment createArticleComment(String content) {
-       return ArticleComment.of(
-                Article.of(createUserAccount(), "title", "content", "hashtag"),
+    private ArticleComment createArticleComment(Long id, String content) {
+        ArticleComment articleComment = ArticleComment.of(
+                createArticle(),
                 createUserAccount(),
                 content
         );
+        ReflectionTestUtils.setField(articleComment, "id", id);
 
+        return articleComment;
     }
 
     private UserAccount createUserAccount() {
         return UserAccount.of(
                 "lee",
                 "password",
-                "tjrdnjs5@gemail.com",
+                "lee@email.com",
                 "Lee",
                 null
         );
@@ -151,17 +139,13 @@ class ArticleCommentServiceTest {
         Article article = Article.of(
                 createUserAccount(),
                 "title",
-                "content"
+                "content",
+                "#java"
         );
-        ReflectionTestUtils.setField(article, "id", 1L);
-        article.addHashtags(Set.of(createHashtag(article)));
 
         return article;
     }
 
-    private Hashtag createHashtag(Article article) {
-        return Hashtag.of("java");
-    }
 
 
 

@@ -1,6 +1,7 @@
 package com.fastcampus.projectboard.controller;
 
 import com.fastcampus.projectboard.config.SecurityConfig;
+import com.fastcampus.projectboard.config.TestSecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -9,9 +10,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
+@Import(TestSecurityConfig.class)
 @WebMvcTest(MainController.class)
 class MainControllerTest  {
 
@@ -28,7 +29,9 @@ class MainControllerTest  {
 
         //when & then
         mvc.perform(get("/"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isOk())
+                .andExpect(view().name("forward:/articles"))
+                .andExpect(forwardedUrl("/articles"));
 
     }
 }
