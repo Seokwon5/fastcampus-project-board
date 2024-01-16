@@ -52,21 +52,27 @@ public class ArticleService {
      }
 
      @Transactional(readOnly = true)
-     public ArticleWithCommentsDto getArticle(long articleId) {
+     public ArticleWithCommentsDto getArticleWithComments(long articleId) {
           return articleRepository.findById(articleId)
                   .map(ArticleWithCommentsDto::from)
                   .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다."));
      }
 
+     @Transactional(readOnly = true)
+     public ArticleDto getArticle(Long articleId) {
+          return articleRepository.findById(articleId)
+                  .map(ArticleDto::from)
+                  .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다 - articleId: " + articleId));
+     }
+
      public void saveArticle(ArticleDto dto) {
           UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
-          articleRepository.save(dto.toEntity());
-
+          articleRepository.save(dto.toEntity(userAccount));
      }
 
      public void updateArticle(Long articleId, ArticleDto dto) {
           try {
-               Article article = articleRepository.getReferenceById(dto.id());
+               Article article = articleRepository.getReferenceById(articleId);
                UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
 
                if (article.getUserAccount().equals(userAccount)) {

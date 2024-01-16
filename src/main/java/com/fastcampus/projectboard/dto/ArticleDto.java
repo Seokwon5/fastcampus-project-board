@@ -17,7 +17,7 @@ public record ArticleDto(
         LocalDateTime modifiedAt,
         String modifiedBy
 ) {
-    public static ArticleDto of(UserAccountDto userAccountDto,LocalDateTime createdAt, String createdBy,LocalDateTime modifiedAt, String modifiedBy, String title, String content, String hashtag) {
+    public static ArticleDto of(UserAccountDto userAccountDto, String title, String content, String hashtag) {
         return new ArticleDto(null, userAccountDto, title, content, hashtag, null, null, null, null);
     }
 
@@ -26,7 +26,6 @@ public record ArticleDto(
     }
 
     public static ArticleDto from(Article entity) {
-        UserAccountDto userAccountDto = UserAccountDto.from(entity.getUserAccount());
         return new ArticleDto(
                 entity.getId(),
                 UserAccountDto.from(entity.getUserAccount()),
@@ -40,7 +39,8 @@ public record ArticleDto(
         );
     }
 
-    public Article toEntity(UserAccountDto userAccountDto) {
+
+    public Article toEntity(UserAccount userAccount) {
         return Article.of(
                 userAccount,
                 title,

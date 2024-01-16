@@ -2,7 +2,6 @@ package com.fastcampus.projectboard.controller;
 
 import com.fastcampus.projectboard.domain.constant.FormStatus;
 import com.fastcampus.projectboard.domain.constant.SearchType;
-import com.fastcampus.projectboard.dto.UserAccountDto;
 import com.fastcampus.projectboard.dto.request.ArticleRequest;
 import com.fastcampus.projectboard.dto.response.ArticleResponse;
 import com.fastcampus.projectboard.dto.response.ArticleWithCommentsResponse;
@@ -49,11 +48,12 @@ public class ArticleController {
     }
 
 
-    @GetMapping("/{articleId} ")
+    @GetMapping("/{articleId}")
     public String article(@PathVariable Long articleId, ModelMap map) {
         ArticleWithCommentsResponse article = ArticleWithCommentsResponse.from(articleService.getArticleWithComments(articleId));
         map.addAttribute("article", article);
-        map.addAttribute("articleComments", article.articleCommentsResponse());
+        map.addAttribute("articleComments", article.articleCommentResponses());
+        map.addAttribute("totalCount", articleService.getArticleCount());
 
         return "articles/detail";
     }
@@ -86,8 +86,8 @@ public class ArticleController {
 
     @PostMapping("/form")
     public String postNewArticle(
-            ArticleRequest articleRequest,
-            @AuthenticationPrincipal BoardPrincipal boardPrincipal
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
+            ArticleRequest articleRequest
 
     ){
         articleService.saveArticle(articleRequest.toDto(boardPrincipal.toDto()));
@@ -103,14 +103,13 @@ public class ArticleController {
         map.addAttribute("formStatus", FormStatus.UPDATE);
 
 
-        return "article/form";
+        return "articles/form";
     }
 
     @PostMapping("/{articleId}/form")
     public String updateArticle(
-            @PathVariable Long articleId,
-            @AuthenticationPrincipal BoardPrincipal boardPrincipal,
-            ArticleRequest articleRequest
+            @PathVariable Long articleId, ArticleRequest articleRequest,
+            @AuthenticationPrincipal BoardPrincipal boardPrincipal
     ) {
         articleService.updateArticle(articleId, articleRequest.toDto(boardPrincipal.toDto()));
 
