@@ -22,12 +22,6 @@ public record ArticleCommentResponse(
         return ArticleCommentResponse.of(id, content, createdAt, email, nickname, userId);
     }
 
-    public static ArticleCommentResponse of(Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId, Long parentCommentId) {
-        Comparator<ArticleCommentResponse> childCommentComparator = Comparator
-                .comparing(ArticleCommentResponse::createdAt)
-                .thenComparingLong(ArticleCommentResponse::id);
-        return new ArticleCommentResponse(id, content, createdAt, email, nickname, userId);
-    }
 
     public static ArticleCommentResponse from(ArticleCommentDto dto) {
         String nickname = dto.userAccountDto().nickname();
